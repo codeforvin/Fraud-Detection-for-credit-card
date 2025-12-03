@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fraud Detection App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Fraud Detection Notebook Runner</h1>
+
+    <form method="POST" action="/predict" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <div class="mb-3">
+            <label class="form-label">Upload Jupyter Notebook</label>
+            <input type="file" name="notebook" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Upload Dataset</label>
+            <input type="file" name="dataset" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Run Notebook</button>
+    </form>
+
+    {% if result %}
+        <div class="mt-5">
+            <h2>Notebook Output</h2>
+            <pre class="bg-white p-3 border rounded">{{ result }}</pre>
+
+            <h2>Confusion Matrices</h2>
+            <div class="row">
+                {% for img in images %}
+                    <div class="col-md-4 text-center mb-4">
+                        <h5>{{ img.split('_')[0].upper() }}</h5>
+                        <img src="{{ url_for('uploaded_file', filename=img) }}" class="img-fluid rounded shadow-sm">
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Display Metrics -->
+            {% if metrics %}
+                <h2 class="mt-5">Model Metrics</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in metrics.items() %}
+                            <tr>
+                                <td>{{ key }}</td>
+                                <td>{{ value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
